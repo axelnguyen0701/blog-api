@@ -1,38 +1,40 @@
-const express = require('express');
+const express = require("express");
 const app = express();
-require('dotenv').config();
-const mongoose = require('mongoose');
+require("dotenv").config();
+const mongoose = require("mongoose");
 
 //Routes:
-const posts = require('./routes/posts');
-const users = require('./routes/users');
-const comments = require('./routes/comments');
+const posts = require("./routes/posts");
+const users = require("./routes/users");
+const comments = require("./routes/comments");
 
 //MONGO STUFF
 const mongoURL = process.env.MONGO_URL;
-mongoose.connect(mongoURL, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false });
+mongoose.connect(mongoURL, {
+	useNewUrlParser: true,
+	useUnifiedTopology: true,
+	useCreateIndex: true,
+	useFindAndModify: false,
+});
 const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error'));
-db.once('open', (req, res) => {
-	console.log("Mongoose connected")
-})
+db.on("error", console.error.bind(console, "connection error"));
+db.once("open", (req, res) => {
+	console.log("Mongoose connected");
+});
 
 //JSON PARSER
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 //Routers:
-app.use('/posts', posts);
-app.use('/users', users);
-app.use('/comments', comments);
+app.use("/posts", posts);
+app.use("/users", users);
+app.use("/comments", comments);
 
 //Errors:
 
-
-app.get('*', function (req, res, next) {
-	const error = new Error(
-		`${req.ip} tried to access ${req.originalUrl}`,
-	);
+app.get("*", function (req, res, next) {
+	const error = new Error(`${req.ip} tried to access ${req.originalUrl}`);
 
 	error.statusCode = 301;
 
@@ -46,13 +48,11 @@ app.use((error, req, res, next) => {
 		return res.status(301).json({ error: "Not found" });
 	}
 
-	return res
-		.status(error.statusCode)
-		.json({ error: error.toString() });
-})
+	return res.status(error.statusCode).json({ error: error.toString() });
+});
 
 const PORT = process.env.PORT;
 
 app.listen(PORT, () => {
-	console.log("Listening on port" + ' ' + PORT)
-})
+	console.log("Listening on port" + " " + PORT);
+});
