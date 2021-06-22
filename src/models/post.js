@@ -17,4 +17,6 @@ PostSchema.virtual("url").get(function () {
   return "/posts/" + this._id;
 });
 
+PostSchema.set("toJSON", { virtuals: true });
+
 module.exports = mongoose.model("Post", PostSchema);

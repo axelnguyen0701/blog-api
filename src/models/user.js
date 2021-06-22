@@ -16,4 +16,5 @@ UserSchema.virtual("url").get(function () {
   return "/users/" + this._id;
 });
 
+UserSchema.set("toJSON", { virtuals: true });
 module.exports = mongoose.model("User", UserSchema);
