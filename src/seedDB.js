@@ -15,6 +15,8 @@ db.once("open", (req, res) => {
 });
 
 async function seedUsers() {
+  await models.Post.deleteMany({});
+  await models.User.deleteMany({});
   const user1 = {
     username: "axelnguyen0701",
     first_name: "Hieu",
@@ -36,6 +38,7 @@ async function seedUsers() {
     content:
       "Fugiat laborum amet cillum velit in occaecat occaecat tempor duis proident sunt ut. Exercitation quis pariatur nulla qui. Magna laborum aliquip eu nostrud et esse consectetur aliqua dolor. Consectetur proident irure quis irure dolore irure labore. Labore commodo proident esse ipsum. Sit occaecat eu do laborum eiusmod sunt deserunt consequat excepteur.",
     author: user1_db,
+    published: false,
   };
 
   const post2 = {
@@ -43,6 +46,7 @@ async function seedUsers() {
     content:
       "Irure ea consequat commodo sunt ex do ipsum proident ullamco sint sit occaecat. Ex et nostrud exercitation incididunt deserunt proident mollit non est consectetur Lorem nisi. Quis aliqua Lorem tempor duis labore irure aliqua tempor labore Lorem. Tempor exercitation mollit ea veniam reprehenderit exercitation aliquip sit et cupidatat.",
     author: user2_db,
+    published: true,
   };
 
   await models.Post.create(post1);

@@ -35,11 +35,12 @@ exports.create_new_post = [
         title: req.body.title,
         content: req.body.content,
         author: user,
-        published: req.body.publish,
+        published: req.body.published,
       };
       const post_DB = await Post.create(post);
       return res.json(post_DB);
     } catch (err) {
+      console.log(err);
       err.statusCode = 400;
 
       return next(err);
