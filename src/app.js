@@ -1,12 +1,16 @@
 const express = require("express");
 const app = express();
+const passport = require("passport");
+require("./passport");
 require("dotenv").config();
 const cors = require("cors");
 const mongoose = require("mongoose");
 
 //Cors:
 app.use(cors());
+
 //Routes:
+const auths = require("./routes/auth");
 const posts = require("./routes/posts");
 const users = require("./routes/users");
 const comments = require("./routes/comments");
@@ -30,9 +34,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 //Routers:
+app.use("/auth", auths);
 app.use("/posts", posts);
-app.use("/users", users);
 app.use("/comments", comments);
+app.use("/users", passport.authenticate("jwt", { session: false }), users);
 
 //Errors:
 

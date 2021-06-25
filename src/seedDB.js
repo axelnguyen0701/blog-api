@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const models = require("./models/index");
+const bcrypt = require("bcryptjs");
 require("dotenv").config();
 //MONGO STUFF
 const mongoURL = process.env.MONGO_URL;
@@ -21,7 +22,7 @@ async function seedUsers() {
     username: "axelnguyen0701",
     first_name: "Hieu",
     last_name: "Nguyen",
-    password: "secretpassword",
+    password: bcrypt.hashSync("secretpassword", 8),
   };
   const user2 = {
     username: "axelnguyen0702",
