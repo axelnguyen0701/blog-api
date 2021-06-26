@@ -14,7 +14,7 @@ exports.sign_up = [
       try {
         const user = await User.findOne({ username: value }).exec();
         if (user) {
-          return Promise.reject("Email already in use");
+          return Promise.reject("Username already in use");
         }
       } catch (err) {
         return next(err);
@@ -23,14 +23,15 @@ exports.sign_up = [
   body("first_name", "Must not be blank").trim().isLength({ min: 1 }).escape(),
   body("last_name", "Must not be blank").trim().isLength({ min: 1 }).escape(),
   body("password", "Must not be blank").trim().isLength({ min: 1 }).escape(),
-  body("confirmationPassword").custom((value, { req }) => {
+  body("password_confirmation").custom((value, { req }) => {
     if (value !== req.body.password) {
-      throw new Error("Password confirmation does not match password");
+      return Promise.reject("Password does not match");
     }
     return true;
   }),
   validation,
   async (req, res, next) => {
+    console.log(req.body);
     try {
       const hashedPassword = await bcrypt.hash(req.body.password, 8);
       const user = {
