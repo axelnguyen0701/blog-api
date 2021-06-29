@@ -60,10 +60,14 @@ exports.edit_post = [
   validation,
   async (req, res, next) => {
     try {
-      const post_DB = await Post.findByIdAndUpdate(req.params.postId, {
-        title: req.body.title,
-        content: req.body.content,
-      }).exec();
+      const post_DB = await Post.findByIdAndUpdate(
+        req.params.postId,
+        {
+          title: req.body.title,
+          content: req.body.content,
+        },
+        { new: true }
+      ).exec();
       return res.json(post_DB);
     } catch (err) {
       err.statusCode = 400;
@@ -77,11 +81,12 @@ exports.delete_post = [
 
   async (req, res, next) => {
     try {
-      const post = await Post.findByIdAndDelete(req.params.postId);
+      const post = await Post.findById(req.params.postId);
+      await post.remove(); //remove comment associated with post
       return res.json(post);
     } catch (error) {
       error.statusCode = 400;
-      return next(err);
+      return next(error);
     }
   },
 ];

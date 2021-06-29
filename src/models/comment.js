@@ -4,8 +4,9 @@ const Schema = mongoose.Schema;
 
 const CommentSchema = new Schema({
   content: { type: String, required: true, maxLength: 100 },
-  author: { type: String, required: true, maxLength: 100 },
+  author: { type: Schema.Types.ObjectId, ref: "User", required: true },
   date: { type: Date, default: Date.now },
+  post: { type: Schema.Types.ObjectId, ref: "Post", required: true },
 });
 
 CommentSchema.virtual("formatted_date").get(function () {

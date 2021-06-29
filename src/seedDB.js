@@ -18,6 +18,7 @@ db.once("open", (req, res) => {
 async function seedUsers() {
   await models.Post.deleteMany({});
   await models.User.deleteMany({});
+  await models.Comment.deleteMany({});
   const user1 = {
     username: "axelnguyen0701",
     first_name: "Hieu",
@@ -50,8 +51,32 @@ async function seedUsers() {
     published: true,
   };
 
-  await models.Post.create(post1);
-  await models.Post.create(post2);
+  const post1db = await models.Post.create(post1);
+  const post2db = await models.Post.create(post2);
+
+  const comment1 = {
+    content: "Nice post!1",
+    author: user1_db,
+    post: post1db._id,
+  };
+  const comment2 = {
+    content: "Not so nice1",
+    author: user2_db,
+    post: post1db._id,
+  };
+  const comment3 = {
+    content: "Nice post!",
+    author: user1_db,
+    post: post2db._id,
+  };
+  const comment4 = {
+    content: "Not so nice",
+    author: user2_db,
+    post: post2db._id,
+  };
+
+  await models.Comment.create([comment1, comment2]);
+  await models.Comment.create([comment3, comment4]);
 }
 
 seedUsers();
