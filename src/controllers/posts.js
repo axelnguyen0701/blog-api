@@ -1,7 +1,8 @@
 const Post = require("../models/post");
 const User = require("../models/user");
-const { body, validationResult } = require("express-validator");
+const { body } = require("express-validator");
 const validation = require("../middleware/validate");
+const passport = require("passport");
 exports.list_all_posts = async (req, res, next) => {
   try {
     const post_list = await Post.find().populate("author").exec();
@@ -22,6 +23,7 @@ exports.get_post = async (req, res, next) => {
   }
 };
 exports.create_new_post = [
+  passport.authenticate("jwt", { session: false }),
   body("title", "Title must not be blank").trim().isLength({ min: 1 }).escape(),
   body("content", "Content must not be blank")
     .trim()
@@ -49,6 +51,7 @@ exports.create_new_post = [
 ];
 
 exports.edit_post = [
+  passport.authenticate("jwt", { session: false }),
   body("title", "Title must not be blank").trim().isLength({ min: 1 }).escape(),
   body("content", "Content must not be blank")
     .trim()
@@ -64,18 +67,21 @@ exports.edit_post = [
       return res.json(post_DB);
     } catch (err) {
       err.statusCode = 400;
-      console.log(err);
       return next(err);
     }
   },
 ];
 
-exports.delete_post = async (req, res, next) => {
-  try {
-    const post = await Post.findByIdAndDelete(req.params.postId);
-    return res.json(post);
-  } catch (error) {
-    error.statusCode = 400;
-    return next(err);
-  }
-};
+exports.delete_post = [
+  passport.authenticate("jwt", { session: false }),
+
+  async (req, res, next) => {
+    try {
+      const post = await Post.findByIdAndDelete(req.params.postId);
+      return res.json(post);
+    } catch (error) {
+      error.statusCode = 400;
+      return next(err);
+    }
+  },
+];
