@@ -5,7 +5,9 @@ const passport = require("passport");
 
 exports.list_all_comments = async (req, res, next) => {
   try {
-    const comment_list = await Comment.find({ post: req.body.postId });
+    const comment_list = await Comment.find({ post: req.params.postId })
+      .populate("author")
+      .exec();
     return res.json(comment_list);
   } catch (error) {
     error.statusCode = 404;
@@ -35,7 +37,7 @@ exports.create_comment = [
       const comment = await Comment.create({
         content: req.body.content,
         author: req.user._id,
-        post: req.body.postId,
+        post: req.params.postId,
       });
       return res.json(comment);
     } catch (err) {

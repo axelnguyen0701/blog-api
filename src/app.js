@@ -13,7 +13,6 @@ app.use(cors());
 const auths = require("./routes/auth");
 const posts = require("./routes/posts");
 const users = require("./routes/users");
-const comments = require("./routes/comments");
 
 //MONGO STUFF
 const mongoURL = process.env.MONGO_URL;
@@ -36,7 +35,6 @@ app.use(express.urlencoded({ extended: true }));
 //Routers:
 app.use("/auth", auths);
 app.use("/posts", posts);
-app.use("/comments", comments);
 app.use("/users", passport.authenticate("jwt", { session: false }), users);
 
 //Errors:
