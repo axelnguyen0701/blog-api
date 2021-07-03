@@ -29,7 +29,7 @@ async function seedUsers() {
     username: "axelnguyen0702",
     first_name: "Axel",
     last_name: "Nguyen",
-    password: "secretpassword1",
+    password: bcrypt.hashSync("secretpassword1", 8),
   };
 
   let user1_db = await models.User.create(user1);

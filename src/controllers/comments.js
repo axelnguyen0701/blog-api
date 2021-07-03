@@ -1,6 +1,6 @@
 const Comment = require("../models/comment");
 const { body } = require("express-validator");
-const validation = require("../middleware/validate");
+const { validate, authorize } = require("../middleware/index");
 const passport = require("passport");
 
 exports.list_all_comments = async (req, res, next) => {
@@ -31,14 +31,15 @@ exports.create_comment = [
     .trim()
     .isLength({ min: 1 })
     .escape(),
-  validation,
+  validate,
   async (req, res, next) => {
     try {
-      const comment = await Comment.create({
+      let comment = await Comment.create({
         content: req.body.content,
         author: req.user._id,
         post: req.params.postId,
       });
+      comment = await comment.execPopulate("author");
       return res.json(comment);
     } catch (err) {
       err.statusCode = 400;
@@ -53,7 +54,8 @@ exports.edit_comment = [
     .trim()
     .isLength({ min: 1 })
     .escape(),
-  validation,
+  validate,
+  authorize,
   async (req, res, next) => {
     try {
       let comment = await Comment.findById(req.params.commentId)
@@ -64,7 +66,6 @@ exports.edit_comment = [
           req.params.commentId,
           {
             content: req.body.content,
-            date: Date.now(),
           },
           { new: true }
         );
@@ -81,14 +82,18 @@ exports.edit_comment = [
   },
 ];
 
-exports.delete_comment = async (req, res, next) => {
-  try {
-    const deleted_comment = await Comment.findByIdAndDelete(
-      req.params.commentId
-    ).exec();
-    return res.json(deleted_comment);
-  } catch (err) {
-    err.statusCode = 400;
-    next(err);
-  }
-};
+exports.delete_comment = [
+  passport.authenticate("jwt", { session: false }),
+  authorize,
+  async (req, res, next) => {
+    try {
+      const deleted_comment = await Comment.findByIdAndDelete(
+        req.params.commentId
+      ).exec();
+      return res.json(deleted_comment);
+    } catch (err) {
+      err.statusCode = 400;
+      next(err);
+    }
+  },
+];

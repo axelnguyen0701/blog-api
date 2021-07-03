@@ -17,4 +17,6 @@ CommentSchema.virtual("url").get(function () {
   return "/comments/" + this._id;
 });
 
+CommentSchema.set("toJSON", { virtuals: true });
+
 module.exports = mongoose.model("Comment", CommentSchema);

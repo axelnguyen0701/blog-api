@@ -1,7 +1,7 @@
 const Post = require("../models/post");
 const User = require("../models/user");
 const { body } = require("express-validator");
-const validation = require("../middleware/validate");
+const { validate, authorize } = require("../middleware/index");
 const passport = require("passport");
 exports.list_all_posts = async (req, res, next) => {
   try {
@@ -29,7 +29,8 @@ exports.create_new_post = [
     .trim()
     .isLength({ min: 1 })
     .escape(),
-  validation,
+  validate,
+  authorize,
   async (req, res, next) => {
     try {
       const user = await User.findOne({ username: "axelnguyen0701" }).exec();
@@ -57,7 +58,8 @@ exports.edit_post = [
     .trim()
     .isLength({ min: 1 })
     .escape(),
-  validation,
+  validate,
+  authorize,
   async (req, res, next) => {
     try {
       const post_DB = await Post.findByIdAndUpdate(
@@ -78,7 +80,7 @@ exports.edit_post = [
 
 exports.delete_post = [
   passport.authenticate("jwt", { session: false }),
-
+  authorize,
   async (req, res, next) => {
     try {
       const post = await Post.findById(req.params.postId);
